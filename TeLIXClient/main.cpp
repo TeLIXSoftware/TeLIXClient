@@ -1,13 +1,12 @@
-
 #include "iracing.h"
+#include "overlay.h"
 
 
 int main(int argc, char* argv[])
 {
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 
-
-
+	overlay::init();
 
 	// Initialize the iRacing SDK
 	ConnectionStatus status = ConnectionStatus::UNKNOWN;
@@ -36,6 +35,10 @@ int main(int argc, char* argv[])
 			// print current speed
 			printf("Speed: %.2f m/s\n", ir_Speed.getFloat());
 
+			overlay::render();
+
 		}
 	}
+
+	// overlay cleanup
 }
