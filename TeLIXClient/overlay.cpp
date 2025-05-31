@@ -17,6 +17,7 @@ static UINT                     g_ResizeWidth = 0, g_ResizeHeight = 0;
 static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
 
 static HWND hwnd;
+static HWND targetWindow;
 static WNDCLASSEXW wc;
 
 bool CreateDeviceD3D(HWND hWnd);
@@ -65,8 +66,19 @@ void overlay::init() {
 }
 
 void overlay::render() {
-
+    targetWindow = FindWindow(NULL, L"Target Window Title");
     ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.0f); // transparent
+
+    if (targetWindow) {
+        RECT rect;
+        if (GetWindowRect(targetWindow, &rect)) {
+            int width = rect.right - rect.left;
+            int height = rect.bottom - rect.top;
+
+            // Move and resize your overlay window
+            MoveWindow(hwnd, rect.left, rect.top, width, height, TRUE);
+        }
+    }
 
     MSG msg;
     while (::PeekMessage(&msg, nullptr, 0U, 0U, PM_REMOVE))
