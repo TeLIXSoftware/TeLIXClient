@@ -56,3 +56,5 @@ nunit-*.xml
 Debug/
 */Debug
 .vs/
+
+sessionYaml.txt
