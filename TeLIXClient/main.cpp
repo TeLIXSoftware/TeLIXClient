@@ -32,9 +32,7 @@ int main(int argc, char* argv[])
 		}
 
 		if (status == ConnectionStatus::DRIVING) {
-			// print current speed
-			printf("Speed: %.2f m/s\n", ir_Speed.getFloat());
-
+			
 			overlay::render();
 
 		}

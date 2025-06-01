@@ -600,7 +600,7 @@ int ir_getPosition(int carIdx)
     return 0;
 }
 
-/**int ir_getLapDeltaToLeader(int carIdx, int ldrIdx)
+int ir_getLapDeltaToLeader(int carIdx, int ldrIdx)
 {
     if (ir_session.sessionType != SessionType::RACE || ir_isPreStart() || carIdx < 0 || ldrIdx < 0)
         return 0;
@@ -623,7 +623,7 @@ int ir_getPosition(int carIdx)
         lapDelta += 1;
 
     return lapDelta;
-}**/
+}
 
 void ir_printVariables()
 {

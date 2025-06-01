@@ -1,4 +1,7 @@
 #pragma once
+
+#define NOMINMAX
+
 namespace overlay
 {
 	void init();

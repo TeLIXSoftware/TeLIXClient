@@ -25,6 +25,8 @@ SOFTWARE.
 #pragma once
 
 #define _CRT_SECURE_NO_WARNINGS 1
+#define NOMINMAX
+
 
 #include "irsdk/irsdk_defines.h"
 #include "irsdk/irsdk_client.h"
@@ -402,6 +404,8 @@ float ir_estimateLaptime();
 
 // Get the best known position, from the latest session we can find.
 int ir_getPosition(int carIdx);
+
+int ir_getLapDeltaToLeader(int carIdx, int ldrIdx);
 
 // Print all the variables the sim supports.
 void ir_printVariables();
