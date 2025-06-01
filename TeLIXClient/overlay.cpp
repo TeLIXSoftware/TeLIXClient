@@ -27,7 +27,7 @@ void CleanupRenderTarget();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void overlay::init() {
-    wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
+    wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"TeLIX Overlay", nullptr };
     ::RegisterClassExW(&wc);
     hwnd = ::CreateWindowExW(
         WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT,
@@ -102,7 +102,8 @@ void overlay::render() {
 
     // RENDER OVERLAYS
 
-	overlay::draw_test_gui(); // call rendering functions here, add if statements if they are enabled
+	//overlay::draw_test_gui(); // call rendering functions here, add if statements if they are enabled
+    overlay::draw_ddu();
 
     // RENDER OVERLAYS
 

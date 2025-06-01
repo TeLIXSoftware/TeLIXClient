@@ -1,10 +1,10 @@
-#include "overlay.h"
+﻿#include "overlay.h"
 #include "imgui/imgui.h"
 
 #include "iracing.h"
 
 void overlay::draw_test_gui() {
-	ImGui::SetNextWindowSize(ImVec2(600, 400));
+	ImGui::SetNextWindowSize(ImVec2(900, 200));
 
 	float speed = ir_Speed.getFloat();
 	float brake = ir_Brake.getFloat();
@@ -14,17 +14,46 @@ void overlay::draw_test_gui() {
 	float gear = ir_Gear.getInt();
 	float rpm = ir_RPM.getFloat();
 
+	float bestLapTime = ir_LapBestLapTime.getFloat();
+	double sessionTime = ir_SessionTime.getDouble();
 
-	ImGui::Begin("gui", nullptr, ImGuiWindowFlags_NoDecoration);
-	{
-		
-		ImGui::Text("Speed: %f m/s", speed);
-		ImGui::Text("Brake: %f", brake);
-		ImGui::Text("Throttle: %f", throttle);
-		ImGui::Text("Steering Angle: %f degrees", steeringAngle);
-		ImGui::Text("Gear: %d", gear);
-		ImGui::Text("RPM: %f r/m", rpm);
+	int currentLap = ir_Lap.getInt();
+	int totalLaps = ir_SessionLapsTotal.getInt();
 
-	}
+	float lastLapTime = ir_LapLastLapTime.getFloat();
+	float p1LapTime = ir_LapDeltaToSessionBestLap.getFloat(); // prob +current lap time
+
+
+	ImGui::Begin("Telemetry Dashboard", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar);
+
+	// Top Row
+	ImGui::Text("Best: %.3f", bestLapTime);
+	ImGui::SameLine(); ImGui::Text("Session: %.2f", sessionTime);
+	ImGui::SameLine(); ImGui::Text("Lap: %d / %d (%d to go)", currentLap, totalLaps, totalLaps - currentLap);
+
+	// Second Row
+	ImGui::Text("Last Lap: %.3f", lastLapTime);
+	ImGui::SameLine(); ImGui::Text("P1 Last: %.3f", p1LapTime);
+
+	float oilTemp = ir_OilTemp.getFloat();
+	float waterTemp = ir_WaterTemp.getFloat();
+
+
+
+
+	// Temps
+	ImGui::Separator();
+	ImGui::Text("Oil: %.2fF", oilTemp);
+	ImGui::SameLine(); ImGui::Text("Water: %.2fF", waterTemp);
+
+	float brakeBias = ir_dcBrakeBias.getFloat();
+	float lapDelta = ir_LapDeltaToOptimalLap.getFloat();
+
+	// Incidents, Bias, Delta
+	ImGui::Separator();
+	ImGui::Text("Incidents: %d", 0);
+	ImGui::SameLine(); ImGui::Text("Lap Delta: %.2f", lapDelta);
+	ImGui::SameLine(); ImGui::Text("Bias: %.1f", brakeBias);
+
 	ImGui::End();
 }
