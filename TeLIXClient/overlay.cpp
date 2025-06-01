@@ -66,7 +66,7 @@ void overlay::init() {
 }
 
 void overlay::render() {
-    targetWindow = FindWindow(NULL, L"Target Window Title");
+    targetWindow = FindWindow(NULL, L"iRacing.com Simulator");
     ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 0.0f); // transparent
 
     if (targetWindow) {
