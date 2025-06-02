@@ -7,6 +7,7 @@
 #include <d3d11.h>
 #include <dwmapi.h>
 
+
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
 
@@ -24,6 +25,7 @@ bool CreateDeviceD3D(HWND hWnd);
 void CleanupDeviceD3D();
 void CreateRenderTarget();
 void CleanupRenderTarget();
+
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 void overlay::init() {
@@ -195,4 +197,19 @@ LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     }
 
     return ::DefWindowProcW(hWnd, msg, wParam, lParam);
+}
+
+void overlay::cleanup() {
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
+
+    CleanupDeviceD3D();
+    ::DestroyWindow(hwnd);
+    ::UnregisterClassW(wc.lpszClassName, wc.hInstance);
+}
+
+bool overlay::isImGuiContext()
+{
+    return (ImGui::GetCurrentContext() != nullptr);
 }

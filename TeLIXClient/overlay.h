@@ -11,5 +11,8 @@ namespace overlay
 
 	// overlays
 	void draw_ddu();
+
+	void cleanup();
+	bool isImGuiContext();
 };
 
