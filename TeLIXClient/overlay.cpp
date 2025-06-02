@@ -33,7 +33,7 @@ void overlay::init() {
     ::RegisterClassExW(&wc);
     hwnd = ::CreateWindowExW(
         WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT,
-        wc.lpszClassName, L"ImGui Example",
+        wc.lpszClassName, L"TeLIX Overlay",
         WS_POPUP,
         0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
         nullptr, nullptr, wc.hInstance, nullptr);
