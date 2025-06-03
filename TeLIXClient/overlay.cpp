@@ -106,6 +106,7 @@ void overlay::render() {
 
 	//overlay::draw_test_gui(); // call rendering functions here, add if statements if they are enabled
     overlay::draw_ddu();
+    overlay::draw_telemetry();
 
     // RENDER OVERLAYS
 

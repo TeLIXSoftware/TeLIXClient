@@ -16,8 +16,8 @@
 // - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
 // - Introduction, links and more at the top of imgui.cpp
 
-#pragma once
-#include "imgui.h"      // IMGUI_IMPL_API
+#include "../../imgui/imgui.h"
+#pragma once     // IMGUI_IMPL_API
 #ifndef IMGUI_DISABLE
 
 // Follow "Getting Started" link and check examples/ folder to learn about using backends!
