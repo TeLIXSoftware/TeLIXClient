@@ -64,6 +64,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cache.cpp">
+    <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="telemetry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
