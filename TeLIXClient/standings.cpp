@@ -34,12 +34,15 @@
 
 struct CarInfo {
 	int carIdx = 0;
+	std::string userName;
+	int irating = 0;
+	std::string licenseStr;
 	int lapCount = 0;
-	int lapDelta = 0;
 	float delta = 0.0f;
 	int position = 0;
 	float best = 0.0f;
 	float last = 0.0f;
+	bool hasFastestLap = false;
 };
 
 // read standings data
@@ -47,23 +50,37 @@ static int GetStandings(std::vector<CarInfo>& carInfoList) {
 	const int maxCars = 64;
 	carInfoList.clear();
 
+	int leaderIdx = -1;
 	for (int i = 0; i < maxCars; ++i) {
-		// skip invalid cars
-		if (ir_CarIdxTrackSurface.getInt(i) == -1) continue;
+		if (ir_getPosition(i) == 1) {
+			leaderIdx = i;
+			break;
+		}
+	}
+
+	for (int i = 0; i < maxCars; ++i) {
+		const Car& car = ir_session.cars[i];
+		if (car.isPaceCar || car.isSpectator || car.userName.empty())
+			continue;
 
 		CarInfo info;
 		info.carIdx = i;
-		info.lapCount = ir_CarIdxLap.getInt(i);
-		info.lapDelta = ir_CarIdxLapDistPct.getInt(i); 
-		//info.delta = ir_getLapDeltaToLeader.getFloat(i);
-		//info.position = ir_getPosition.getInt(i);
+		info.userName = car.userName;
+		info.irating = car.irating;
+		info.licenseStr = car.licenseStr;
+		info.lapCount = ir_CarIdxLapCompleted.getInt(i);
+		info.delta = (ir_session.sessionType == SessionType::RACE) ? -ir_CarIdxF2Time.getFloat(i) : 0.0f;
+		info.position = ir_getPosition(i);
 		info.best = ir_CarIdxBestLapTime.getFloat(i);
 		info.last = ir_CarIdxLastLapTime.getFloat(i);
+
+		if ((ir_session.sessionType == SessionType::RACE && ir_SessionState.getInt() <= irsdk_StateWarmup) ||
+			(ir_session.sessionType == SessionType::QUALIFY && info.best <= 0))
+			info.best = car.qualTime;
 
 		carInfoList.push_back(info);
 	}
 
-	// sort by position
 	std::sort(carInfoList.begin(), carInfoList.end(), [](const CarInfo& a, const CarInfo& b) {
 		return a.position < b.position;
 		});
@@ -73,55 +90,64 @@ static int GetStandings(std::vector<CarInfo>& carInfoList) {
 
 
 void overlay::draw_standings() {
-	const float tableWidth = 600.0f;
-	const float tableHeight = 150.0f;
+    std::vector<CarInfo> cars;
+    int numCars = GetStandings(cars);
+    if (numCars == 0) return;
 
-	// read standings data
-	std::vector<CarInfo> cars;
-	int numCars = GetStandings(cars);
-	if (numCars == 0) return;
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 screenSize = io.DisplaySize;
 
-	// positioning
-	ImGuiIO& io = ImGui::GetIO();
-	ImVec2 screenSize = io.DisplaySize;
+    float x = 0.0f;
+    float y = 0.0f;
 
-	float x = 0.0f;
-	float y = screenSize.y - 10.0f;
+    // Calculate dynamic height
+    float rowHeight = ImGui::GetTextLineHeightWithSpacing();
+    float headerHeight = rowHeight * 2.0f; // for header
+    float tableHeight = rowHeight * (float)numCars;
+    float desiredHeight = headerHeight + tableHeight + 16.0f; // some padding
 
-	ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always, ImVec2(0.0f, 1.0f));
-	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 120), ImVec2(800, 400));
+	float width = screenSize.x * 0.3f; // screen width percentage
 
-	if (ImGui::Begin("TeLIX Standings", nullptr,
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoFocusOnAppearing)) {
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always, ImVec2(0.0f, 0.0f));
+    ImGui::SetNextWindowSize(ImVec2(width, desiredHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(width, 120), ImVec2(width, 3000));
 
-		ImGui::Text("Live Race Standings");
+    if (ImGui::Begin("TeLIX Standings", nullptr,
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_AlwaysAutoResize |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoFocusOnAppearing)) {
 
-		if (ImGui::BeginTable("StandingsTable", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
-			ImGui::TableSetupColumn("CarIdx");
-			ImGui::TableSetupColumn("Lap");
-			ImGui::TableSetupColumn("DeltaLap");
-			ImGui::TableSetupColumn("DeltaToLeader");
-			ImGui::TableSetupColumn("Pos");
-			ImGui::TableSetupColumn("Last");
+        ImGui::Text("Live Race Standings");
 
-			ImGui::TableHeadersRow();
+        if (ImGui::BeginTable("StandingsTable", 8, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+            ImGui::TableSetupColumn("CarIdx");
+            ImGui::TableSetupColumn("Name");
+            ImGui::TableSetupColumn("iRating");
+            ImGui::TableSetupColumn("License");
+            ImGui::TableSetupColumn("Lap");
+            ImGui::TableSetupColumn("DeltaToLeader");
+            ImGui::TableSetupColumn("Pos");
+            ImGui::TableSetupColumn("Last");
 
-			for (const auto& car : cars) {
-				ImGui::TableNextRow();
-				ImGui::TableSetColumnIndex(0); ImGui::Text("%d", car.carIdx);
-				ImGui::TableSetColumnIndex(1); ImGui::Text("%d", car.lapCount);
-				ImGui::TableSetColumnIndex(2); ImGui::Text("%d", car.lapDelta);
-				ImGui::TableSetColumnIndex(3); ImGui::Text("%.3f", car.delta);
-				ImGui::TableSetColumnIndex(4); ImGui::Text("%d", car.position);
-				ImGui::TableSetColumnIndex(5); ImGui::Text("%.3f", car.last);
-			}
+            ImGui::TableHeadersRow();
 
-			ImGui::EndTable();
-		}
+            for (const auto& car : cars) {
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0); ImGui::Text("%d", car.carIdx);
+                ImGui::TableSetColumnIndex(1); ImGui::Text("%s", car.userName.c_str());
+                ImGui::TableSetColumnIndex(2); ImGui::Text("%d", car.irating);
+                ImGui::TableSetColumnIndex(3); ImGui::Text("%s", car.licenseStr.c_str());
+                ImGui::TableSetColumnIndex(4); ImGui::Text("%d", car.lapCount);
+                ImGui::TableSetColumnIndex(5); ImGui::Text("%.3f", car.delta);
+                ImGui::TableSetColumnIndex(6); ImGui::Text("%d", car.position);
+                ImGui::TableSetColumnIndex(7); ImGui::Text("%.3f", car.last);
+            }
 
-		ImGui::End();
-	}
+            ImGui::EndTable();
+        }
+
+        ImGui::End();
+    }
+
 }
