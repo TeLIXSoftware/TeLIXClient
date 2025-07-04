@@ -32,15 +32,16 @@ void overlay::init() {
     wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"TeLIX Overlay", nullptr };
     ::RegisterClassExW(&wc);
     hwnd = ::CreateWindowExW(
-        WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT,
+        WS_EX_TOPMOST | WS_EX_LAYERED, // No WS_EX_TRANSPARENT, no click-through
         wc.lpszClassName, L"TeLIX Overlay",
-        WS_POPUP,
+        WS_POPUP, // No border, no caption, no thickframe
         0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
         nullptr, nullptr, wc.hInstance, nullptr);
 
-    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT);
+    SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_TOPMOST | WS_EX_LAYERED);
 
     SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 0, LWA_COLORKEY);
+
     MARGINS margin = { -1 };
     DwmExtendFrameIntoClientArea(hwnd, &margin);
 
@@ -61,8 +62,7 @@ void overlay::init() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
 
     ImGui::StyleColorsDark();
-    ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = 1.0f; // Make sure window bg is visible
-
+    ImGui::GetStyle().Colors[ImGuiCol_WindowBg].w = 1.0f; // Window backgrounds are opaque, but the overlay is transparent
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
 }
@@ -107,6 +107,7 @@ void overlay::render() {
 	//overlay::draw_test_gui(); // call rendering functions here, add if statements if they are enabled
     overlay::draw_ddu();
     overlay::draw_telemetry();
+    overlay::draw_standings();
 
     // RENDER OVERLAYS
 

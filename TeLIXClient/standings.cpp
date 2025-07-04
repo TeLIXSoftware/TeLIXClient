@@ -106,15 +106,15 @@ void overlay::draw_standings() {
     float tableHeight = rowHeight * (float)numCars;
     float desiredHeight = headerHeight + tableHeight + 16.0f; // some padding
 
-	float width = screenSize.x * 0.3f; // screen width percentage
+    float width = screenSize.x * 0.3f; // screen width percentage
 
-    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always, ImVec2(0.0f, 0.0f));
-    ImGui::SetNextWindowSize(ImVec2(width, desiredHeight), ImGuiCond_Always);
+    // Only set position/size on first use, so user can move/resize after
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_FirstUseEver, ImVec2(0.0f, 0.0f));
+    ImGui::SetNextWindowSize(ImVec2(width, desiredHeight), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSizeConstraints(ImVec2(width, 120), ImVec2(width, 3000));
 
     if (ImGui::Begin("TeLIX Standings", nullptr,
         ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_AlwaysAutoResize |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoFocusOnAppearing)) {
 
@@ -149,5 +149,4 @@ void overlay::draw_standings() {
 
         ImGui::End();
     }
-
 }
