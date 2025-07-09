@@ -21,7 +21,7 @@ ImVec2 MeasureImGuiContentSize(std::function<void()> contentDrawFunc) {
     // Clip offscreen to hide drawing
     window->ClipRect.Min = ImVec2(-10000, -10000);
     window->ClipRect.Max = ImVec2(-9999, -9999);
-
+ 
     ImGui::BeginGroup();
     contentDrawFunc();
     ImGui::EndGroup();
@@ -195,18 +195,12 @@ void overlay::draw_ddu() {
 
     float x = (screenSize.x) * 0.25f; // Center horizontally
     float y = screenSize.y * .65f; // Snap to bottom
-    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
-
-
-    ImGui::SetNextWindowSize(ImVec2(0, 0)); // Let ImGui calculate based on contents
-    ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, FLT_MAX));
+    ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(600, 400), ImGuiCond_FirstUseEver); // Example default size
 
     ImGui::Begin("TeLIX DDU", nullptr,
         ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_AlwaysAutoResize);
+        ImGuiWindowFlags_NoScrollbar);
 
     DrawRPMBar(rpmPct, (775));
 

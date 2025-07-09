@@ -12,6 +12,7 @@ namespace overlay
 	// overlays
 	void draw_ddu();
 	void draw_telemetry();
+	void draw_standings();
 
 	void cleanup();
 	bool isImGuiContext();
