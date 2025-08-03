@@ -215,3 +215,9 @@ bool overlay::isImGuiContext()
 {
     return (ImGui::GetCurrentContext() != nullptr);
 }
+
+namespace overlay {
+    void draw_standings() {
+        // TODO: Implement standings overlay rendering here
+    }
+}
