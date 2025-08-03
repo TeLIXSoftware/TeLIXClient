@@ -26,7 +26,7 @@ struct TelemetryHistory {
 
 static TelemetryHistory history;
 
-				//Telemetry graph for seperate graphs, not in same box. ImGUI doesn't native support this. need to switch from Plotlines
+//Telemetry graph for seperate graphs, not in same box. ImGUI doesn't native support this. need to switch from Plotlines
  
 void DrawTelemetryGraph(float graphWidth, float graphHeight) {
 	if (history.throttle.empty()) return; // check if empty
@@ -43,7 +43,7 @@ void DrawTelemetryGraph(float graphWidth, float graphHeight) {
 }
 
 void overlay::draw_telemetry() {
-	const float graphWidth = 600.0f;
+	const float graphWidth = 450.0f;
 	const float graphHeight = 100.0f;
 
 	// read telemetry data
@@ -63,14 +63,13 @@ void overlay::draw_telemetry() {
 	float x = screenSize.x * 0.0f;
 	float y = screenSize.y - 100.0f;
 
-	ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always, ImVec2(0.0f, 1.0f));
+	ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_FirstUseEver, ImVec2(0.0f, 1.0f));
+	ImGui::SetNextWindowSize(ImVec2(500, 180), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSizeConstraints(ImVec2(300, 120), ImVec2(800, 400));
 
 	if (ImGui::Begin("TeLIX Telemetry", nullptr,
 		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoCollapse |
-		ImGuiWindowFlags_NoFocusOnAppearing)) {
+		ImGuiWindowFlags_NoCollapse)) {
 
 		ImGui::Text("Real-Time Driving Inputs");
 		DrawTelemetryGraph(graphWidth, graphHeight);
